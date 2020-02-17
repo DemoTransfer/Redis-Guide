@@ -35,8 +35,8 @@ RedisGuide
 
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-caching-avalanche-and-caching-penetration.md">了解什么是 redis 的雪崩、穿透和击穿？Redis 崩溃之后会怎么样？系统该如何应对这种情况？如何处理 Redis 的穿透？</a>
 
-* <a href="">如何保证缓存与数据库的双写一致性？</a>
+* <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-consistence.md">如何保证缓存与数据库的双写一致性？</a>
 
-* <a href="">Redis 的并发竞争问题是什么？如何解决这个问题？了解 Redis 事务的 CAS 方案吗？</a>
+* <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-cas.md">Redis 的并发竞争问题是什么？如何解决这个问题？了解 Redis 事务的 CAS 方案吗？</a>
 
-* <a href="">生产环境中的 Redis 是怎么部署的？</a>
+* <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-production-environment.md">生产环境中的 Redis 是怎么部署的？</a>
