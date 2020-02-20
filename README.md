@@ -1,17 +1,19 @@
 RedisGuide
 =====
 
-* 推荐阅读
+推荐阅读
+------
 
-      <a href="https://github.com/doocs/advanced-java">缓存</a>
-      
-      <a href="https://redis.io/">Redis官网</a>
-      
-      <a href="http://www.redis.cn/">Redis中文官网</a>
+* <a href="https://github.com/doocs/advanced-java">缓存</a>
 
-      <a href="http://www.linuxe.cn/sort/redis">Redis运维教程</a>
+* <a href="https://redis.io/">Redis官网</a>
 
-* RabbitMQ部署：基于腾讯云Linux服务器安装Redis服务
+* <a href="http://www.redis.cn/">Redis中文官网</a>
+
+* <a href="http://www.linuxe.cn/sort/redis">Redis运维教程</a>
+
+RabbitMQ部署：基于腾讯云Linux服务器安装Redis服务
+------
    
     
 目录
