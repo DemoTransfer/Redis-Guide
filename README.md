@@ -9,6 +9,7 @@ RedisGuide
       
       <a href="http://www.redis.cn/">Redis中文官网</a>
 
+      <a href="http://www.linuxe.cn/sort/redis">Redis运维教程</a>
 
 * RabbitMQ部署：基于腾讯云Linux服务器安装Redis服务
    
