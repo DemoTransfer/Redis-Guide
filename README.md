@@ -50,3 +50,13 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-cas.md">Redis 的并发竞争问题是什么？如何解决这个问题？了解 Redis 事务的 CAS 方案吗？</a>
 
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-production-environment.md">生产环境中的 Redis 是怎么部署的？</a>
+
+
+基本操作Demo
+====
+
+* <a href="https://github.com/DemoTransfer/RedisGuide/tree/master/coding/redis-distributed-lock">Redis实现分布式锁示例</a>
+
+* <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/coding/redis-client-java-utils/RedilUtil.md">最全的Java操作Redis的工具类，封装了对Redis五种基本类型的各种操作，力求符合Redis的原生操作，使用StringRedisTemplate实现！</a>
+
+   * <a href="https://github.com/whvcse/RedisUtil">来源于RedisUtil</a>
