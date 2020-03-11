@@ -26,8 +26,20 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 
 * idea编译器
 
-知识点扫盲
+基本知识扫盲
 ------
+
+* <a href="https://www.cnblogs.com/kismetv/category/1186633.html">Redis内存模型、持久化、主从复制、哨兵、集群介绍</a>
+
+    * <a href="https://www.cnblogs.com/kismetv/p/8654978.html">Redis内存模型</a>
+    
+    * <a href="https://www.cnblogs.com/kismetv/p/9137897.html">Redis持久化</a>
+    
+    * <a href="https://www.cnblogs.com/kismetv/p/9236731.html">Redis主从复制</a>
+    
+    * <a href="https://www.cnblogs.com/kismetv/p/9609938.html">Redis哨兵</a>
+    
+    * <a href="https://www.cnblogs.com/kismetv/p/9853040.html">Redis集群</a>
 
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/why-cache.md">在项目中缓存是如何使用的？缓存如果使用不当会造成什么后果？</a>
 
@@ -53,7 +65,7 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 
 
 基本操作Demo
-====
+------
 
 * <a href="https://github.com/DemoTransfer/RedisGuide/tree/master/coding/redis-distributed-lock">Redis实现分布式锁示例</a>
 
