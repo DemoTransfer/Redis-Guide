@@ -255,3 +255,375 @@ Redis 集群模式至少需要3个主节点，作为举例，本文搭建一个3
 
 主备关系如下图所示，其中 M 代码 Master 节点，S 代表 Slave 节点，A-M 和 A-S 为一对主备节点。
 
+![Redis-cluster七]()
+
+按照上图所示的拓扑结构，如果节点1故障下线，那么节点2上的 A-S 将升主为 A-M，Redis 3节点集群仍可用，如下图所示：
+
+![Redis-cluster八]()
+
+**特别说明**：事实上，Redis 集群节点间是两两互通的，如下图所示，上面作为示意图，进行了适当简化。
+
+![Redis-cluster九]()
+
+<h3>资源准备</h3>
+
+(1) 下载 Redis 包：前往 Redis 官网下载 Redis 资源包，本文采用的 Redis 版本为4.0.8。
+
+(2) 将下载的 Redis 资源包 redis-3.2.11.tar.gz 放到自定义目录下，解压，编译便可以生成 Redis 服务端和本地客户端 bin 文件 redis-server 和 redis-cli，具体操作命令如下：
+
+```java
+tar xzf redis-4.0.8.tar.gz
+cd redis-4.0.8
+make
+```
+
+(3) 编译完成后，在 src 目录下可以看到生成的 bin 文件 redis-server 和 redis-cli。
+
+<h3>集群配置</h3>
+
+写作本文时，手头只有一台机器，无法搭建物理层面的3节点集群，限于条件，我在同一台机器上创建6个 Redis 实例，构建3主3备。
+
+(1) 创建目录
+
+根据端口号分别创建名为6379，6380，6381，6382，6383，6384的文件夹。
+
+(2) 修改配置文件
+
+在解压文件夹 redis-4.0.8 中有一个 Redis 配置文件 redis.conf，其中一些默认的配置项需要修改（配置项较多，本文仅为举例，修改一些必要的配置）。以下仅以6379端口为例进行配置，6380，6381等端口配置操作类似。将修改后的配置文件分别放入6379~6384文件夹中。
+
+![Redis-cluster十]()
+
+(3) 创建必要启停脚本
+
+逐一手动拉起 Redis 进程较为麻烦，在此，我们可以编写简单的启停脚本完成 redis-server 进程的启停（start.sh 和 stop.sh）。
+
+![Redis-cluster十一]()
+
+（4）简单测试
+
+至此，我们已经完成 Redis 集群创建的前期准备工作，在创建集群之前，我们可以简单测试一下，redis-sever 进程是否可以正常拉起。运行 start.sh 脚本，查看 redis-server 进程如下：
+
+![Redis-cluster十二]()
+
+登陆其中一个 Redis 实例的客户端（以6379为例），查看集群状态：很明显，以节点6379的视角来看，集群处于 fail 状态，clusterknownnodes:1 表示集群中只有一个节点。
+
+![Redis-cluster十三]()
+
+<h3>基于 Lettuce 创建 Redis 集群</h3>
+
+关于创建 Redis 集群，官方提供了一个 Ruby 编写的运维软件 redis-trib.rb，使用简单的命令便可以完成创建集群、添加节点、负载均衡等操作。正因为简单，用户很难通过黑盒表现理解其中细节，鉴于此，本文将基于 Lettuce 编写创建 Redis 集群的代码，让读者对 Redis 集群创建有一个更深入的理解。
+
+Redis 发展至今，其对应的开源客户端几乎涵盖所有语言，详情请见<a href="https://redis.io/clients">官网</a>，本文采用 Java 语言开发的 Lettuce 作为 Redis 客户端。Lettuce 是一个可伸缩线程安全的 Redis 客户端，多个线程可以共享同一个 RedisConnection。它利用优秀 Netty NIO 框架来高效地管理多个连接。
+
+![Redis-cluster十四]()
+
+<h3>Redis 集群创建的步骤</h3>
+
+(1) 相互感知，初步形成集群
+
+在上文中，我们已经成功拉起了6个 redis-server 进程，每个进程视为一个节点，这些节点仍处于孤立状态，它们相互之间无法感知对方的存在，既然要创建集群，首先需要让这些孤立的节点相互感知，形成一个集群；
+
+(2) 分配 Slot 给期望的主节点
+
+形成集群之后，仍然无法提供服务，Redis 集群模式下，数据存储于16384个 Slot 中，我们需要将这些 Slot 指派给期望的主节点。何为期望呢？我们有6个节点，3主3备，我们只能将 Slot 指派给3个主节点，至于哪些节点为主节点，我们可以自定义。
+
+(3) 设置从节点
+
+Slot 分配完成后，被分配 Slot 的节点将成为真正可用的主节点，剩下的没有分到 Slot 的节点，即便状态标志为 Master，实际上也不能提供服务。接下来，处于可靠性的考量，我们需要将这些没有被指派 Slot 的节点指定为可用主节点的从节点（Slave）。
+
+经过上述三个步骤，一个精简的3主3备 Redis 集群就搭建完成了。
+
+<h3>基于 Lettuce 的创建集群代码</h3>
+
+根据上述步骤，基于 Lettuce 创建集群的代码如下（仅供入门参考）：
+
+```java
+private static void createCluster() throws InterruptedException
+    {
+        //初始化集群节点列表，并指定主节点列表和从节点列表
+        List<ClusterNode> clusterNodeList = new ArrayList<ClusterNode>();
+        List<ClusterNode> masterNodeList = new ArrayList<ClusterNode>();
+        List<ClusterNode> slaveNodeList = new ArrayList<ClusterNode>();
+        String[] endpoints = {"127.0.0.1:6379","127.0.0.1:6380","127.0.0.1:6381"
+                ,"127.0.0.1:6382","127.0.0.1:6383","127.0.0.1:6384"};
+        int index = 0;
+        for (String endpoint : endpoints)
+        {
+            String[] ipAndPort = endpoint.split(":");
+            ClusterNode node = new ClusterNode(ipAndPort[0], Integer.parseInt(ipAndPort[1]));
+            clusterNodeList.add(node);
+            //将6379，6380，6381设置为主节点，其余为从节点
+            if (index < 3)
+            {
+                masterNodeList.add(node);
+            }
+            else
+            {
+                slaveNodeList.add(node);
+            }
+            index++;
+        }       
+        //分别与各个Redis节点建立通信连接
+        for (ClusterNode node : clusterNodeList)
+        {
+            RedisURI redisUri = RedisURI.Builder.redis(node.getHost(), node.getPort()).build();
+            RedisClient redisClient = RedisClient.create(redisUri);
+            try
+            {
+                StatefulRedisConnection<String, String> connection = redisClient.connect();
+                connection.setTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS);
+                node.setClient(redisClient);
+                node.setConnection(connection);
+                node.setMyId(connection.sync().clusterMyId());
+            } catch (RedisException e)
+            {
+                System.out.println("connection failed-->" + node.getHost() + ":" + node.getPort());
+            }
+        }   
+
+        //执行cluster meet命令是各个孤立的节点相互感知，初步形成集群。
+        //只需以一个节点为基准，让所有节点与之meet即可
+        ClusterNode firstNode = null;
+        for (ClusterNode node : clusterNodeList)
+        {
+            if (firstNode == null)
+            {
+                firstNode = node;
+            } 
+            else
+            {
+                try
+                {
+                    node.getConnection().sync().clusterMeet(firstNode.getHost(), firstNode.getPort());
+                } 
+                catch (RedisCommandTimeoutException | RedisConnectionException e)
+                {
+                    System.out.println("meet failed-->" + node.getHost() + ":" + node.getPort());
+                } 
+            }
+        }
+        //为主节点指派slot,将16384个slot分成三份：5461，5461，5462
+        int[] slots = {0,5460,5461,10921,10922,16383};
+        index = 0;
+        for (ClusterNode node : masterNodeList)
+        {
+            node.setSlotsBegin(slots[index]);
+            index++;
+            node.setSlotsEnd(slots[index]);
+            index++;
+        }
+        //通过与各个主节点的连接，执行addSlots命令为主节点指派slot
+        System.out.println("Start to set slots...");
+        for (ClusterNode node : masterNodeList)
+        {
+            try
+            {
+                node.getConnection().sync().clusterAddSlots(createSlots(node.slotsBegin, node.slotsEnd));
+            } 
+            catch (RedisCommandTimeoutException | RedisConnectionException e)
+            {
+                System.out.println("add slots failed-->" + node.getHost() + ":" + node.getPort());
+            }
+        }
+        //延时5s，等待slot指派完成
+        sleep(5000);
+        //为已经指派slot的主节点设置从节点,6379,6380,6381分别对应6382，6383，6384
+        index = 0;
+        for (ClusterNode node : slaveNodeList)
+        {
+            try
+            {       
+                node.getConnection().sync().clusterReplicate(masterNodeList.get(index).getMyId());      
+            } 
+            catch (RedisCommandTimeoutException | RedisConnectionException e)
+            {
+                System.out.println("replicate failed-->" + node.getHost() + ":" + node.getPort());
+            } 
+        }
+        //关闭连接
+        for (ClusterNode node : clusterNodeList)
+        {
+            node.getConnection().close();
+            node.getClient().shutdown();
+        }
+    }
+```
+
+节点定义代码
+
+```java
+public static class ClusterNode
+    {
+        private String host;
+        private int port;
+        private int slotsBegin;
+        private int slotsEnd;
+        private String myId;
+        private String masterId;
+        private StatefulRedisConnection<String, String> connection;
+        private RedisClient redisClient;
+
+        public ClusterNode(String host, int port)
+        {
+            this.host = host;
+            this.port = port;
+            this.slotsBegin = 0;
+            this.slotsEnd = 0;
+            this.myId = null;
+            this.masterId = null;
+        }
+
+        public String getHost()
+        {
+            return host;
+        }
+
+        public int getPort()
+        {
+            return port;
+        }
+
+        public void setMaster(String masterId)
+        {
+            this.masterId = masterId;
+        }
+
+        public String getMaster()
+        {
+            return masterId;
+        }
+
+        public void setMyId(String myId)
+        {
+            this.myId = myId;
+        }
+
+        public String getMyId()
+        {
+            return myId;
+        }
+
+        public void setSlotsBegin(int first)
+        {
+            this.slotsBegin = first;
+        }
+
+        public void setSlotsEnd(int last)
+        {
+            this.slotsEnd = last;
+        }
+
+        public int getSlotsBegin()
+        {
+            return slotsBegin;
+        }
+
+        public int getSlotsEnd()
+        {
+            return slotsEnd;
+        }
+
+        public void setConnection(StatefulRedisConnection<String, String> connection)
+        {
+            this.connection = connection;
+        }
+
+        public void setClient(RedisClient client)
+        {
+            this.redisClient = client;
+        }
+
+        public StatefulRedisConnection<String, String> getConnection()
+        {
+            return connection;
+        }
+
+        public RedisClient getClient()
+        {
+            return redisClient;
+        }
+
+    }
+```
+
+运行上述代码创建集群，再次登陆其中一个节点的客户端（以6379为例），通过命令：cluster nodes，cluster info 查看集群状态信息如下，集群已经处于可用状态。
+
+![Redis-cluster十五]()
+
+经过上述步骤，一个可用的 Redis 集群已经创建完毕，接下来，通过一段代码进程测试：
+
+```java
+public static void main(String[] args)
+    {
+        List<ClusterNode> clusterNodeList = new ArrayList<ClusterNode>();
+        List<RedisURI> redisUriList = new ArrayList<RedisURI>();
+        String[] endpoints = {"127.0.0.1:6379","127.0.0.1:6380","127.0.0.1:6381"
+                ,"127.0.0.1:6382","127.0.0.1:6383","127.0.0.1:6384"};
+        for (String endpoint : endpoints)
+        {
+            String[] ipAndPort = endpoint.split(":");
+            ClusterNode node = new ClusterNode(ipAndPort[0], Integer.parseInt(ipAndPort[1]));
+            clusterNodeList.add(node);
+        }       
+        //创建RedisURI
+        for (ClusterNode node : clusterNodeList)
+        {
+            RedisURI redisUri = RedisURI.Builder.redis(node.getHost(), node.getPort()).build();
+            redisUriList.add(redisUri);
+        }   
+        //创建Redis集群客户端，建立连接，执行set，get基本操作
+        RedisClusterClient redisClusterClient = RedisClusterClient.create(redisUriList);
+        StatefulRedisClusterConnection<String, String> conn = redisClusterClient.connect();
+        RedisAdvancedClusterCommands<String, String> cmd = null;
+        cmd = conn.sync();
+        System.out.println(cmd.set("key-test", "value-test"));
+        System.out.println(cmd.get("key-test"));
+        //关闭连接
+        cmd.close();
+        conn.close();
+        redisClusterClient.shutdown();      
+    }
+```
+
+八、Redis“踩坑”
+====
+
+在使用 Redis 的过程中，踩过不少坑，本章将列举其中5个，限于篇幅，将在下一场 chat 中介绍相关内容。
+
+<h3>1、'GLIBC_2.14' not found</h3>
+
+**现象**：在 Linux 机 A 上编译 Redis 源码生成 redis-server，在目标 Linux 机 B 上运行 redis-server 时报错：libc.so.6:version `GLIBC_2.14' not found。
+
+**原因**：很明显，报错显示目标 Linux 机 B 上找不到 GLIBC2.14 版本，而 redis-server 编译时使用了 GLIBC2.14。通过命令 ```strings /lib64/libc.so.6 | grep GLIBC``` 可以查看 Linux 操作系统支持的 GLIBC 版本，以便确认问题（libc.so.6路径因操作系统而异）。
+
+进一步，通过命令 ```objdump -T redis-server | fgrep GLIBC_2.14``` 查看 redis-server 依赖的 GLIBC_2.14 版本库的具体函数，截至目前，只发现一个问题函数 memcpy。
+
+**解决方案**：
+
+1. 确保编译机和目标机的 GLIBC 版本兼容；
+2. 在涉及问题函数的 Redis 源码中添加约束，显示指定问题函数依赖的 GLIBC 版本，约束代码如下，指定 memcpy 函数依赖的 GLIBC 版本为2.2.5。
+```java
+__asm__(“.symver memcpy,memcpy@GLIBC_2.2.5”)
+```
+
+<h3>2、openssl版本问题</h3>
+
+**现象**：在 Linux 机上拉起 redis-server 进程失败，无报错信息，无日志。
+
+**原因**：通过 GDB 调试，发现问题在于 Linux 系统上 OpenSSL 版本过低，低于 1.0.1e。
+
+**解决方案**：为了解除 Redis 对 OpenSSL 版本的依赖，我们可以修改编译文件（makefile），将依赖的 OpenSSL 库打入编译生成的 redis-server中，一劳永逸。
+
+<h3>3、Lettuce 客户端与集群连接失败</h3>
+
+**现象**：出于安全考量，客户端 Lettuce 访问 Redis 服务端采用了双向证书认证机制，重装操作系统后，Lettuce 客户端与 Redis 服务端连接失败，报错信息价值有限，难以定位根因。
+
+**原因**：经过排查，发现重装操作系统后系统时间设置错误，比北京时间前移10年，超过了证书的有效期，导致认证失败。这种问题报错信息较少，原因简单，有时却难以定位。
+
+<h3>4、Redis 主节点 Slot 丢失问题</h3>
+
+**现象**：反复重启 redis-server 进程，偶现 Master 节点 Slot 丢失的情况，Redis 集群不可用，查看集群信息如下（举例）：Master 节点6381的 Slot 丢失，造成 Redis 集群 Slot 不满，不能提供服务。问题根因及解决方案将在下一篇文章中呈现。
+
+<h3>5、ERR Slot xxx is already busy</h3>
+
+**现象**： Redis 集群故障转移（failover）时，从机升主接管 Slot 时报错：ERR Slot xxx is already busy，导致故障转移失败。问题根因及解决方案将在下一场 Chat 中呈现。
