@@ -76,7 +76,7 @@ Redis 单机模式下，即便是“1主 N 备”结构，当主节点故障时�
 
 Redis 集群实现的基础是分片，即将数据集有机的分割为多个片，并将这些分片指派给多个 Redis 实例，每个实例只保存总数据集的一个子集。利用多台计算机内存和来支持更大的数据库，而避免受限于单机的内存容量；通过多核计算机集群，可有效扩展计算能力；通过多台计算机和网络适配器，允许我们扩展网络带宽。
 
-![Redis集群一](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%B8%80.png)
+![Redis集群基础](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/redis%E9%9B%86%E7%BE%A4%E5%AE%9E%E7%8E%B0%E5%9F%BA%E7%A1%80.png)
 
 Redis 集群分片的几种实现方式如下：
 
@@ -96,6 +96,7 @@ Redis 集群分片的几种实现方式如下：
 
 从3.0版本开始，Redis 支持集群模式——Redis-Cluster，可线性扩展到1000个节点。Redis-Cluster 采用无中心架构，每个节点都保存数据和整个集群状态，每个节点都和其它所有节点连接。Redis-Cluster 架构图如下所示。
 
+
 1. Redis 官方出品，可线性扩展到1000个节点；
 
 2. 无中心架构：每个节点都保存数据和整个集群状态，每个节点都和其它所有节点连接；
@@ -103,6 +104,8 @@ Redis 集群分片的几种实现方式如下：
 3. 一致性哈希思想；
 
 4. 客户端直连 Redis 服务，免去了 Proxy 代理的损耗。
+
+![Redis集群一](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%B8%80.png)
 
 <h3>Redis-Cluster 原理</h3>
 
