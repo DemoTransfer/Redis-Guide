@@ -49,7 +49,7 @@
 
 顾名思义，单机模式就是指 Redis 主节点以单个节点的形式存在，这个主节点可读可写，上面存储数据全集。在3.0版本之前，Redis 只能支持单机模式，出于可靠性考量，通常单机模式为“1主 N 备”的结构，如下所示：
 
-![Redis单机模式结构一]()
+![Redis单机模式结构一](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%E4%BD%BF%E7%94%A8%E7%BB%93%E6%9E%84%E4%B8%80.png)
 
 需要说明的是，即便有很多个 Redis 主节点，只要这些主节点以单机模式存在，本质上仍为单机模式。单机模式比较简单，足以支撑一般应用场景，但单机模式具有固有的局限性：不支持自动故障转移，扩容能力极为有限，高并发瓶颈。
 
@@ -57,7 +57,7 @@
 
 Redis 单机模式下，即便是“1主 N 备”结构，当主节点故障时，备节点也无法自动升主，即无法自动故障转移。故障转移需要“哨兵”Sentinel 辅助，Sentinel 是 Redis 高可用的解决方案，由一个或者多个 Sentinel 实例组成的系统可以监视 Redis 主节点及其从节点，当检测到 Redis 主节点下线时，会根据特定的选举规则从该主节点对应的所有从节点中选举出一个“最优”的从节点升主，然后由升主的新主节点处理请求。具有 Sentinel 系统的单机模式示意图如下：
 
-![Sentinel 系统的单机模式示意图]()
+![Sentinel 系统的单机模式示意图](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Sentinel%20%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%E7%A4%BA%E6%84%8F%E5%9B%BE.png)
 
 * 扩容能力极为有限
 
@@ -76,7 +76,7 @@ Redis 单机模式下，即便是“1主 N 备”结构，当主节点故障时�
 
 Redis 集群实现的基础是分片，即将数据集有机的分割为多个片，并将这些分片指派给多个 Redis 实例，每个实例只保存总数据集的一个子集。利用多台计算机内存和来支持更大的数据库，而避免受限于单机的内存容量；通过多核计算机集群，可有效扩展计算能力；通过多台计算机和网络适配器，允许我们扩展网络带宽。
 
-![Redis集群一]()
+![Redis集群一](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%B8%80.png)
 
 Redis 集群分片的几种实现方式如下：
 
@@ -126,7 +126,7 @@ Redis 集群分片的几种实现方式如下：
 
 以三节点为例，上述操作的路由查询流程示意图如下所示：
 
-![Redis-cluster四]()
+![Redis-cluster四](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%9B%9B.png)
 
 和普通的查询路由相比，Redis-Cluster 借助客户端实现的请求路由是一种混合形式的查询路，它并非从一个 Redis 节点到另外一个 Redis，而是借助客户端转发到正确的节点。
 
@@ -140,7 +140,7 @@ Redis 集群分片的几种实现方式如下：
 
 * 包括 Lettuce、Jedis 在内的一些客户端，实现了客户端分片机制。
 
-![Redis-cluster五]()
+![Redis-cluster五](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%BA%94.png)
 
 采用客户端分片具有逻辑简单，性能高的优点，但缺点也很明显：业务逻辑与数据存储逻辑耦合，可运维性差；多业务各自使用 Redis，集群资源难以管理，不支持动态增删节点。
 
@@ -297,7 +297,7 @@ make
 
 逐一手动拉起 Redis 进程较为麻烦，在此，我们可以编写简单的启停脚本完成 redis-server 进程的启停（start.sh 和 stop.sh）。
 
-![Redis-cluster十一]()
+![Redis-cluster十一](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%8D%81%E4%B8%80.png)
 
 （4）简单测试
 
@@ -548,7 +548,7 @@ public static class ClusterNode
 
 运行上述代码创建集群，再次登陆其中一个节点的客户端（以6379为例），通过命令：cluster nodes，cluster info 查看集群状态信息如下，集群已经处于可用状态。
 
-![Redis-cluster十五]()
+![Redis-cluster十五](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%8D%81%E4%BA%94.png)
 
 经过上述步骤，一个可用的 Redis 集群已经创建完毕，接下来，通过一段代码进程测试：
 
