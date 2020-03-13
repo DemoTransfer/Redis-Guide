@@ -118,11 +118,11 @@ Redis 集群分片的几种实现方式如下：
 
 客户端直连 Redis 服务，进行读写操作时，Key 对应的 Slot 可能并不在当前直连的节点上，经过“重定向”才能转发到正确的节点。如下图所示，我们直接登陆127.0.0.1:6379客户端，进行 set 操作，当 Key 对应的 Slot 不在当前节点时（如 key-test)，客户端会报错并返回正确的节点的 IP 和端口。
 
-![Redis-cluster二]()
+![Redis-cluster二](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%BA%8C.png)
 
 以集群模式登陆127.0.0.1:6379客户端（注意命令的差别：-c 表示集群模式)，则可以清楚的看到“重定向”的信息，并且客户端也发生了切换：“6379”->“6381”。
 
-![Redis-cluster三]()
+![Redis-cluster三](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%B8%89.png)
 
 以三节点为例，上述操作的路由查询流程示意图如下所示：
 
@@ -152,7 +152,7 @@ Redis 集群分片的几种实现方式如下：
 
 基本原理如下图所示：
 
-![Redis-cluster六]()
+![Redis-cluster六](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%85%AD.png)
 
 五、Redis 故障转移
 ====
@@ -255,15 +255,15 @@ Redis 集群模式至少需要3个主节点，作为举例，本文搭建一个3
 
 主备关系如下图所示，其中 M 代码 Master 节点，S 代表 Slave 节点，A-M 和 A-S 为一对主备节点。
 
-![Redis-cluster七]()
+![Redis-cluster七](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%B8%83.png)
 
 按照上图所示的拓扑结构，如果节点1故障下线，那么节点2上的 A-S 将升主为 A-M，Redis 3节点集群仍可用，如下图所示：
 
-![Redis-cluster八]()
+![Redis-cluster八](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%85%AB.png)
 
 **特别说明**：事实上，Redis 集群节点间是两两互通的，如下图所示，上面作为示意图，进行了适当简化。
 
-![Redis-cluster九]()
+![Redis-cluster九](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E4%B9%9D.png)
 
 <h3>资源准备</h3>
 
@@ -291,7 +291,7 @@ make
 
 在解压文件夹 redis-4.0.8 中有一个 Redis 配置文件 redis.conf，其中一些默认的配置项需要修改（配置项较多，本文仅为举例，修改一些必要的配置）。以下仅以6379端口为例进行配置，6380，6381等端口配置操作类似。将修改后的配置文件分别放入6379~6384文件夹中。
 
-![Redis-cluster十]()
+![Redis-cluster十](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%8D%81.png)
 
 (3) 创建必要启停脚本
 
@@ -303,11 +303,11 @@ make
 
 至此，我们已经完成 Redis 集群创建的前期准备工作，在创建集群之前，我们可以简单测试一下，redis-sever 进程是否可以正常拉起。运行 start.sh 脚本，查看 redis-server 进程如下：
 
-![Redis-cluster十二]()
+![Redis-cluster十二](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%8D%81%E4%BA%8C.png)
 
 登陆其中一个 Redis 实例的客户端（以6379为例），查看集群状态：很明显，以节点6379的视角来看，集群处于 fail 状态，clusterknownnodes:1 表示集群中只有一个节点。
 
-![Redis-cluster十三]()
+![Redis-cluster十三](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%8D%81%E4%B8%89.png)
 
 <h3>基于 Lettuce 创建 Redis 集群</h3>
 
@@ -315,7 +315,7 @@ make
 
 Redis 发展至今，其对应的开源客户端几乎涵盖所有语言，详情请见<a href="https://redis.io/clients">官网</a>，本文采用 Java 语言开发的 Lettuce 作为 Redis 客户端。Lettuce 是一个可伸缩线程安全的 Redis 客户端，多个线程可以共享同一个 RedisConnection。它利用优秀 Netty NIO 框架来高效地管理多个连接。
 
-![Redis-cluster十四]()
+![Redis-cluster十四](https://github.com/DemoTransfer/RedisGuide/blob/master/document/picture/Redis-cluster%E5%8D%81%E5%9B%9B.png)
 
 <h3>Redis 集群创建的步骤</h3>
 
