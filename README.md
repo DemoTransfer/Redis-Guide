@@ -26,7 +26,21 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 
 * idea编译器
 
-基本知识扫盲
+Redis持久化
+------
+
+![Redis持久化](https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/picture/Redis%E6%8C%81%E4%B9%85%E5%8C%96.png)
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/RDB%E5%92%8CAOF%E6%8C%81%E4%B9%85%E5%8C%96%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9.md">RDB和AOF持久化如何选择</a>
+
+Redis复制的原理和优化
+------
+
+![Redis复制的原理和优化](https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/picture/Redis%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E4%BC%98%E5%8C%96.png)
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-copy/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.md">Redis的主从复制</a>
+
+面试必备
 ------
 
 * <a href="https://www.cnblogs.com/kismetv/category/1186633.html">Redis内存模型、持久化、主从复制、哨兵、集群介绍</a>
@@ -41,6 +55,8 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
     
     * <a href="https://www.cnblogs.com/kismetv/p/9853040.html">Redis集群</a>
 
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/basic/Redis-%E9%81%BF%E5%85%8D%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F%E7%9A%84%E5%88%A9%E5%99%A8%E4%B9%8BBloomFilter.md">Redis-避免缓存穿透的利器之BloomFilter</a>
+	
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/why-cache.md">在项目中缓存是如何使用的？缓存如果使用不当会造成什么后果？</a>
 
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-single-thread-model.md">Redis 和 Memcached 有什么区别？Redis 的线程模型是什么？为什么单线程的 Redis 比多线程的 Memcached 效率要高得多？</a>
@@ -63,6 +79,15 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/document/basic/redis-production-environment.md">生产环境中的 Redis 是怎么部署的？</a>
 
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/basic/%E3%80%8A%E4%BB%8A%E5%A4%A9%E9%9D%A2%E8%AF%95%E4%BA%86%E5%90%97%E3%80%8B-Redis.md">《今天面试了吗》-Redis</a>
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/basic/%E3%80%8A%E5%90%8A%E6%89%93%E9%9D%A2%E8%AF%95%E5%AE%98%E3%80%8B%E7%B3%BB%E5%88%97-%20Redis%E5%9F%BA%E7%A1%80.md">《吊打面试官》系列- Redis基础</a>
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/basic/%E5%9F%BA%E4%BA%8E%20Redis%20%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E7%BC%93%E5%AD%98%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88%E5%8F%8A%E5%8F%AF%E9%9D%A0%E6%80%A7%E5%8A%A0%E5%9B%BA%E7%AD%96%E7%95%A5.md">基于 Redis 的分布式缓存实现方案及可靠性加固策略</a>
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/basic/%E5%9F%BA%E4%BA%8E%20Redis%20%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8F%8A%E8%B8%A9%E5%9D%91%E6%A1%88%E4%BE%8B.md">基于 Redis 的分布式锁实现及踩坑案例</a>
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/basic/%E9%98%BF%E9%87%8C%E9%9D%A2%E8%AF%95Redis%E6%9C%80%E5%B8%B8%E9%97%AE%E7%9A%84%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%9A%E7%BC%93%E5%AD%98%E9%9B%AA%E5%B4%A9%E3%80%81%E5%87%BB%E7%A9%BF%E3%80%81%E7%A9%BF%E9%80%8F%EF%BC%88%E5%B8%A6%E7%AD%94%E6%A1%88%EF%BC%89.md">阿里面试Redis最常问的三个问题：缓存雪崩、击穿、穿透（带答案）.</a>
 
 基本操作Demo
 ------
@@ -72,17 +97,3 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/coding/redis-client-java-utils/RedilUtil.md">最全的Java操作Redis的工具类，封装了对Redis五种基本类型的各种操作，力求符合Redis的原生操作，使用StringRedisTemplate实现！</a>
 
    * <a href="https://github.com/whvcse/RedisUtil">来源于RedisUtil</a>
-
-Redis持久化
-------
-
-![Redis持久化](https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/picture/Redis%E6%8C%81%E4%B9%85%E5%8C%96.png)
-
-* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/RDB%E5%92%8CAOF%E6%8C%81%E4%B9%85%E5%8C%96%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9.md">RDB和AOF持久化如何选择</a>
-
-Redis复制的原理和优化
-------
-
-![Redis复制的原理和优化](https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/picture/Redis%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E4%BC%98%E5%8C%96.png)
-
-* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-copy/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.md">Redis的主从复制</a>
