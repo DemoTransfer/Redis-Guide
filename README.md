@@ -83,6 +83,6 @@ Redis持久化
 Redis复制的原理和优化
 ------
 
-![Redis复制的原理和优化]()
+![Redis复制的原理和优化](https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/picture/Redis%E5%A4%8D%E5%88%B6%E7%9A%84%E5%8E%9F%E7%90%86%E5%92%8C%E4%BC%98%E5%8C%96.png)
 
 * <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-copy/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.md">Redis的主从复制</a>
