@@ -72,3 +72,17 @@ Redis部署：基于腾讯云Linux服务器安装Redis服务
 * <a href="https://github.com/DemoTransfer/RedisGuide/blob/master/coding/redis-client-java-utils/RedilUtil.md">最全的Java操作Redis的工具类，封装了对Redis五种基本类型的各种操作，力求符合Redis的原生操作，使用StringRedisTemplate实现！</a>
 
    * <a href="https://github.com/whvcse/RedisUtil">来源于RedisUtil</a>
+
+Redis持久化
+------
+
+![Redis持久化](https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/picture/Redis%E6%8C%81%E4%B9%85%E5%8C%96.png)
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-persistence/RDB%E5%92%8CAOF%E6%8C%81%E4%B9%85%E5%8C%96%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9.md">RDB和AOF持久化如何选择</a>
+
+Redis复制的原理和优化
+------
+
+![Redis复制的原理和优化]()
+
+* <a href="https://github.com/DemoTransfer/Redis-Guide/blob/master/document/redis-guide/redis-copy/Redis%E7%9A%84%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.md">Redis的主从复制</a>
